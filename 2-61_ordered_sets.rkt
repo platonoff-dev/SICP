@@ -1,0 +1,40 @@
+#lang racket 
+
+(define (element-of-set? x set)
+  (cond ((null? set) false)
+      ((= x (car set)) true)
+      ((< x (car set)) false)
+      (else (element-of-set? x (cdr set)))))
+
+(define (intersection-set set1 set2)
+    (if (or (null? set1) (null? set2))
+      '()
+      (let ((x1 (car set1)) (x2 (car set2)))
+          (cond ((= x1 x2)
+                  (cons x1 (intersection-set (cdr set1)
+                                            (cdr set2))))
+                ((< x1 x2)
+                  (intersection-set (cdr set1) set2))
+                ((< x2 x1)
+                  (intersection-set set1 (cdr set2)))))))
+
+
+(define (union-set s1 s2)
+  (cond ((and (null? s1) (null? s2)) null)
+    ((null? s1)
+      (cons (car s2) (union-set s1 (cdr s2))))
+    ((null? s2)
+      (cons (car s1) (union-set (cdr s1) s2)))
+    ((< (car s1) (car s2))
+      (cons (car s1) (union-set (cdr s1) s2)))
+    ((> (car s1) (car s2))
+      (cons (car s2) (union-set s1 (cdr s2))))
+    ((= (car s1) (car s2))
+      (cons (car s1) (union-set (cdr s1) (cdr s2))))))
+
+
+(define (adjoin-set x s)
+  (cond ((null? s) (cons x s))
+        ((< x (car s)) (cons x s))
+        ((= x (car s)) s)
+        (else (cons (car s) (adjoin-set x (cdr s))))))
