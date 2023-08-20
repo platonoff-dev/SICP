@@ -9,7 +9,7 @@
 
     (define (check-password pwd)
       (define (check-password-rec pass allowed-list)
-        (if (null?(car allowed-list))
+        (if (null? allowed-list)
           (if (> incorrect-count 6) 
             (call-the-cops)
             (begin
@@ -34,7 +34,7 @@
       balance)
     
     (define (add-password pass)
-      (set! registered-passwords (cons registered-passwords pass)))
+      (set! registered-passwords (cons pass registered-passwords)))
 
     (define (dispatch pass action)
       (let ([pass-check-result (check-password pass)])
@@ -51,9 +51,16 @@
     ((acc pass 'add-password) new-pass)
     acc))
 
+; Check OK case
 (define acc (make-account 100 'pass))
 ((acc 'pass 'deposit) 100)
 ((acc 'pass 'withdraw) 150)
+((acc 'wrong 'deposit) 100)
 
+; Check joint case
 (define acc2 (make-joint acc 'pass 'new-pass))
 ((acc2 'new-pass 'deposit) 300)
+((acc2 'wrong-pass 'withdraw) 100)
+
+; Check joint with wrong password
+(define acc3 (make-joint acc 'wrong-pass 'new-pass))
